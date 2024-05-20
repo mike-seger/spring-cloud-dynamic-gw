@@ -47,9 +47,8 @@ dependencyManagement {
 	}
 }
 
-springBoot {
-	mainClass = 'uk.co.doc.config.PdfConversionApplication'
-//	requiresUnpack = ['org.jruby:jruby-complete', 'org.asciidoctor:asciidoctorj']
+bootJar {
+	requiresUnpack '**/asciidoctorj-*.jar'
 }
 
 tasks.named('test') {
