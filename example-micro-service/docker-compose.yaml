@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  micro-service1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_APPLICATION_NAME=micro-service1
+    ports:
+      - "10001:8081"
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  micro-service2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_APPLICATION_NAME=micro-service2
+    ports:
+      - "10002:8081"
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  micro-service3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_APPLICATION_NAME=micro-service3
+    ports:
+      - "10003:8081"
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  micro-service4:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SPRING_APPLICATION_NAME=micro-service4
+    ports:
+      - "10004:8081"
+    deploy:
+      restart_policy:
+        condition: on-failure

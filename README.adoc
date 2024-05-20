@@ -1,0 +1,61 @@
+= Dynamic Spring Cloud Gateway
+:sectnums:
+
+This application demonstrates a dynamic Spring Cloud Gateway with a REST controller to allow managing dynamic routes.
+
+== Start the application
+
+....
+./gradlew bootRun
+....
+
+== Access the application
+
+=== springdoc-ui
+
+The REST API can be accessed via UI here:
+link:http://localhost:8080/swagger-ui.html[role=resource,window=_blank]
+
+== Example Micro-Service
+:sectnums:
+
+This separate example application is provided to demonstrate the routing of micro-services through the gateway.
+
+=== Preparation
+....
+cd example-micro-service
+....
+
+=== Build the micro-service and its docker image
+....
+./gradlew clean build
+docker-compose build
+....
+
+=== Start 4 configured instances of the micro-service
+....
+docker-compose up -d
+....
+
+These instances will respond on:
+
+. http://localhost:10001/ -> micro-service1
+. http://localhost:10002/ -> micro-service2
+. http://localhost:10003/ -> micro-service3
+. http://localhost:10004/ -> micro-service4
+
+== Pre-configured routes in the gateway application
+
+The gateway application provides the following pre-configured routes:
+
+|===
+|Micro Service  | Host URL                                                  | Gateway configuration       | Gateway URL
+|micro-service1 | link:http://localhost:10001/[role=resource,window=_blank] | spring.cloud.gateway.routes                       | link:http://localhost:8080/micro-service1/[role=resource,window=_blank]
+|micro-service2 | link:http://localhost:10002/[role=resource,window=_blank] | dynamic-routes              | link:http://localhost:8080/micro-service2/[role=resource,window=_blank]
+|micro-service3 | link:http://localhost:10003/[role=resource,window=_blank] |                             |
+|micro-service4 | link:http://localhost:10004/[role=resource,window=_blank] |                             |
+|===
+
+micro-service1 is configured in spring.cloud.gateway.routes cannot be managed at runtime.
+
+All other routes are dynamic and can be managed at runtime.
