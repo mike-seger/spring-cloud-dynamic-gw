@@ -14,6 +14,7 @@ This application demonstrates a dynamic Spring Cloud Gateway with a REST control
 === springdoc-ui
 
 The REST API can be accessed via UI here:
+
 link:http://localhost:8080/swagger-ui.html[role=resource,window=_blank]
 
 == Example Micro-Service
