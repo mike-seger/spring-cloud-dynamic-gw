@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="style.css" rel="stylesheet">
+    <script src="https://cdn.fancygrid.com/fancy.min.js"></script>
+    <title>Manage routes</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div id="grid"></div>
+    <input type="button" value="Save" id="save">
+
+    <script src="https://cdn.jsdelivr.net/npm/importabular"></script>
+    <script>
+        let base='../..'
+        if (location.hostname === "localhost" || location.hostname === "127.0.0.1")
+            base="http://localhost:8080"
+
+        const routesUri = base+'/routes'
+
+        async function getText(uri) {
+            const res = await fetch(uri)
+            const text = await res.text()
+            return text
+        }
+
+        async function getJson(uri) {
+            const res = await fetch(uri)
+            const json = await res.json()
+            return json
+        }
+
+        async function postJson(uri, object) {
+            const res = await fetch(uri, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(object)
+            })
+            const statusCode = res.status;
+            console.log('Status Code:', statusCode);
+            return statusCode
+        }
+
+        window.onload = async function init() {
+            const sheet = new Importabular({
+                node: document.getElementById("grid"),
+                columns: [
+                    { label: "ID", placeholder: "Route ID, e.g., "},
+                    { label: "path", placeholder: "Local path pattern, e.g., /service1/**"},
+                    { label: "uri", placeholder: "e.g., https://www.google.com/"}
+                ],
+                css: await getText('routing-table.css')
+            })
+
+            function extractRoutingPath(r) { 
+                const args = r.predicates.find(p => p.name == 'Path').args
+                const key = Object.keys(args)[0]
+                return args[key] 
+            }
+            
+            const routes = await getJson(routesUri)
+            const routingTable = routes.map(r => [r.id, extractRoutingPath(r), r.uri])
+            console.log(routingTable)
+            sheet.setData(routingTable)
+
+            function isValidRoutingParameters(p) {
+                return /^[A-Za-z0-9.-]+$/.test(p[0])
+            }
+
+            function createRoutingObject(values) {
+                const result = {
+                    id: values[0],
+                    predicates: [
+                        {
+                            name: "Path",
+                            args: { 0: values[1] }
+                        }
+                    ],
+                    filters: [
+                        {
+                            name: "StripPrefix",
+                            args: {
+                                0: "1"
+                            }
+                        }
+                    ],
+                    uri: values[2],
+                    metadata: {},
+                    order: 0
+                }
+                return result
+            }
+
+            async function saveData() {
+                const routingTable = sheet.getData()
+                const routingObjects = routingTable
+                    .filter((r) => isValidRoutingParameters(r))
+                    .map(r => createRoutingObject(r))
+                console.log(JSON.stringify(routingObjects))
+                const result = await postJson(routesUri, routingObjects)
+                alert(`Saved with result ${result}`)
+            }
+            document.getElementById('save').addEventListener("click", saveData)
+        }
+    </script>
+
+</body>
+</html>
+

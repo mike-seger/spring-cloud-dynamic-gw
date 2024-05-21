@@ -6,12 +6,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Tag(name = "Dynamic Route Definition API", description =
     """
@@ -33,7 +36,7 @@ public class RouteDefinitionController {
         return routeDefinitionService.getRoutes();
     }
 
-    @PostMapping
+    @PatchMapping
     @Operation(summary = "Set a route definition.",
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             content = @Content(
@@ -45,12 +48,30 @@ public class RouteDefinitionController {
             .then(Mono.just(ResponseEntity.ok().build()));
     }
 
+    @PostMapping
+    @Operation(summary = "Set a route definition.",
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(
+                schema = @Schema(implementation = RouteDefinitionList.class),
+                examples = { @ExampleObject(value = "[\n"+exampleRouteDefinition+"\n]" ) }))
+    )
+    public Mono<ResponseEntity<Void>> setRoutes(@RequestBody List<RouteDefinition> routeDefinitions) {
+        routeDefinitions.forEach(this::setRoute);
+        return Mono.just(ResponseEntity.ok().build());
+    }
+
     @DeleteMapping("/{routeId}")
     @Operation(summary = "Delete a route definition.",
         parameters = {@Parameter(name = "routeId", example = "microservice2-route")})
     public Mono<ResponseEntity<Void>> deleteRoute(@PathVariable String routeId) {
         return routeDefinitionService.deleteRoute(routeId)
             .then(Mono.just(ResponseEntity.ok().build()));
+    }
+
+
+    @Data
+    private static class RouteDefinitionList {
+        private List<RouteDefinition> routeDefinitions;
     }
 
     private final static String exampleRouteDefinition = """
@@ -76,5 +97,5 @@ public class RouteDefinitionController {
         "metadata": {},
         "order": 0
       }
-    """;
+      """;
 }

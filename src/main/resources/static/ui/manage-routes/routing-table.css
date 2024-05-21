@@ -1,0 +1,16 @@
+table {
+    text-align: left;
+    position: relative;
+    overflow-y: auto;
+}
+
+thead {
+    background: rgb(79, 79, 79);
+    color: white;
+    position: sticky;
+    top: 0;
+}
+
+td:nth-child(1) { width: 15%; }
+td:nth-child(2) { width: 25%; }
+td:nth-child(3) { width: 60%; }
