@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Comparator;
+import java.util.List;
+
 @Service
 public class RouteDefinitionService {
 
@@ -19,7 +22,13 @@ public class RouteDefinitionService {
     }
 
     public Flux<RouteDefinition> getRoutes() {
-        return routeDefinitionRepository.getRouteDefinitions();
+        return routeDefinitionRepository.getRouteDefinitions()
+            .sort(Comparator.comparing(RouteDefinition::getId));
+    }
+
+    public Flux<Void> setRoutes(List<RouteDefinition> routeDefinitions) {
+        return Flux.fromIterable(routeDefinitions)
+                .flatMap(this::setRoute);
     }
 
     public Mono<Void> setRoute(RouteDefinition routeDefinition) {

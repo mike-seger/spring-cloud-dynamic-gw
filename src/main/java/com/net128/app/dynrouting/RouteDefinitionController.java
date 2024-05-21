@@ -56,8 +56,9 @@ public class RouteDefinitionController {
                 examples = { @ExampleObject(value = "[\n"+exampleRouteDefinition+"\n]" ) }))
     )
     public Mono<ResponseEntity<Void>> setRoutes(@RequestBody List<RouteDefinition> routeDefinitions) {
-        routeDefinitions.forEach(this::setRoute);
-        return Mono.just(ResponseEntity.ok().build());
+        return Mono.just(routeDefinitions)
+            .flatMapMany(routeDefinitionService::setRoutes)
+            .then(Mono.just(ResponseEntity.ok().build()));
     }
 
     @DeleteMapping("/{routeId}")

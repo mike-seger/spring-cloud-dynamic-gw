@@ -62,10 +62,14 @@
                 return args[key] 
             }
             
-            const routes = await getJson(routesUri)
-            const routingTable = routes.map(r => [r.id, extractRoutingPath(r), r.uri])
-            console.log(routingTable)
-            sheet.setData(routingTable)
+            async function loadRoutingTable() {
+                const routes = await getJson(routesUri)
+                const routingTable = routes.map(r => [r.id, extractRoutingPath(r), r.uri])
+                console.log(routingTable)
+                sheet.setData(routingTable)
+            }
+
+            await loadRoutingTable()
 
             function isValidRoutingParameters(p) {
                 return /^[A-Za-z0-9.-]+$/.test(p[0])
@@ -103,6 +107,7 @@
                 console.log(JSON.stringify(routingObjects))
                 const result = await postJson(routesUri, routingObjects)
                 alert(`Saved with result ${result}`)
+                await loadRoutingTable()
             }
             document.getElementById('save').addEventListener("click", saveData)
         }
