@@ -60,3 +60,11 @@ The gateway application provides the following pre-configured routes:
 micro-service1 is configured in spring.cloud.gateway.routes cannot be managed at runtime.
 
 All other routes are dynamic and can be managed at runtime.
+
+== Route management UI
+link:http://localhost:8080/ui/manage-routes/index.html[role=resource,window=_blank]
+
+== Deployment to Azure
+....
+./gradlew clean build azureWebAppDeploy -x test
+....
