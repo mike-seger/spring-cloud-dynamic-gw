@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 @RequiredArgsConstructor
@@ -24,7 +25,7 @@ public class InMemoryRouteDefinitionRepository implements RouteDefinitionReposit
         }
     }
 
-    private final Map<String, RouteDefinition> routes = new HashMap<>();
+    private final Map<String, RouteDefinition> routes = new ConcurrentHashMap<>();
 
     @Override
     public Flux<RouteDefinition> getRouteDefinitions() {
@@ -39,5 +40,10 @@ public class InMemoryRouteDefinitionRepository implements RouteDefinitionReposit
     @Override
     public Mono<Void> delete(Mono<String> routeId) {
         return routeId.doOnNext(routes::remove).then();
+    }
+
+    public Mono<Void> deleteAll() {
+        routes.clear();
+        return Mono.empty();
     }
 }

@@ -27,9 +27,11 @@ public class RouteDefinitionService {
     }
 
     public Flux<Void> setRoutes(List<RouteDefinition> routeDefinitions) {
-        return Flux.fromIterable(routeDefinitions)
-                .flatMap(this::setRoute);
+        return routeDefinitionRepository.deleteAll()
+            .thenMany(Flux.fromIterable(routeDefinitions)
+                .flatMap(this::setRoute));
     }
+
 
     public Mono<Void> setRoute(RouteDefinition routeDefinition) {
         return routeDefinitionRepository.save(Mono.just(routeDefinition)).then(Mono.defer(() -> {
