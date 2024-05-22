@@ -68,3 +68,6 @@ link:http://localhost:8080/ui/manage-routes/index.html[role=resource,window=_bla
 ....
 ./gradlew clean build azureWebAppDeploy -x test
 ....
+
+=== Access Gateway
+link:https://mikeapp0.azurewebsites.net/[role=resource,window=_blank]
