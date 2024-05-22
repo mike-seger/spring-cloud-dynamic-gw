@@ -46,4 +46,11 @@ public class RouteDefinitionService {
             return Mono.empty();
         }));
     }
+
+    public Mono<Void> deleteAllRoutes() {
+        return routeDefinitionRepository.deleteAll().then(Mono.defer(() -> {
+            publisher.publishEvent(new RefreshRoutesEvent(this));
+            return Mono.empty();
+        }));
+    }
 }
