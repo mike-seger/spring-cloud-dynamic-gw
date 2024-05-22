@@ -3,10 +3,6 @@
 
 This application demonstrates a dynamic Spring Cloud Gateway with a REST controller to allow managing dynamic routes.
 
-== Source
-
-https://github.com/mike-seger/spring-cloud-dynamic-gw
-
 == Start the application
 
 ....
